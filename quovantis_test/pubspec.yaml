@@ -1,0 +1,33 @@
+name: quovantis_test
+description: Quovantis Practical Test
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  dio: ^3.0.10
+  build_runner: ^1.12.2
+  built_value: ^8.0.4
+  flutter_bloc: ^7.0.0
+  equatable: ^2.0.0
+  expandable_group: ^0.0.7
+  connectivity: ^3.0.3
+  fluttertoast: ^8.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  built_value_generator: ^8.0.4
+
+flutter:
+
+  uses-material-design: true
+
