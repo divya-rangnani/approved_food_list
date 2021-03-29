@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quovantis_test/ui/approvedfood/approved_food_list.dart';
+import 'package:quovantis_test/utils/SlideRightRoute.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,6 +15,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        pageTransitionsTheme: PageTransitionsTheme(
+        builders: {
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        }),
       ),
       home: MyHomePage(title: 'Launch Screen'),
     );
@@ -38,16 +44,20 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
           child: OutlinedButton(
         onPressed: () {
-          Navigator.push(
+          /*Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ApprovedFoodList(
                       title: 'Approved Foods List',
                     )),
-          );
+          );*/
+          Navigator.push(context, FadeRoute(page: ApprovedFoodList(
+            title: 'Approved Foods List',
+          )));
         },
         child: Text('Present Approved Foods List'),
       )),
     );
   }
 }
+

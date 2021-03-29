@@ -12,6 +12,7 @@ import 'package:quovantis_test/model/approved_food.dart';
 import 'package:quovantis_test/model/categories.dart';
 import 'package:quovantis_test/model/subcategories.dart';
 import 'package:quovantis_test/utils/CommonApiClass.dart';
+import 'package:quovantis_test/utils/CommonMethods.dart';
 
 class ApprovedFoodList extends StatefulWidget {
   ApprovedFoodList({Key key, this.title}) : super(key: key);
@@ -21,34 +22,13 @@ class ApprovedFoodList extends StatefulWidget {
   _ApprovedFoodListState createState() => _ApprovedFoodListState();
 }
 
-BoxDecoration commonBorderLines() {
-  return BoxDecoration(
-    color: Colors.black12,
-    border: Border.all(width: 2, color: Colors.black12),
-    borderRadius: BorderRadius.all(Radius.circular(10)),
-  );
-}
+
 
 class _ApprovedFoodListState extends State<ApprovedFoodList> {
-  TextEditingController searchController = new TextEditingController();
-
-  Future<ApprovedFood> getApprovedFoodList() async {
-    Response response = await CommonApiClass.callAPI(
-      "https://api.jsonbin.io/b/5fce7e1e2946d2126fff85f0",
-      null,
-      null,
-      0,
-    );
-    if (response.statusCode == 200 && response.data != null) {
-      ApprovedFood approvedFoodResponse =
-          ApprovedFood.fromJson(response.data.toString());
-      return approvedFoodResponse;
-    } else {
-      throw Exception('Failed to load schedule');
-    }
-  }
-
+  TextEditingController _searchController = new TextEditingController();
+  
   ApprovedFood _approvedFoodResponse;
+  ApprovedFood _newApprovedFoodResponse;
   BuildContext _context;
 
   @override
@@ -75,61 +55,49 @@ class _ApprovedFoodListState extends State<ApprovedFoodList> {
         }
 
         return Scaffold(
-            backgroundColor: Colors.grey,
+            backgroundColor: Color.fromRGBO(234, 233, 239, 1.0),
             appBar: AppBar(
-              title: Text(widget.title),
+              backgroundColor: Color.fromRGBO(234, 233, 239, 1.0),
+              elevation: 0,
+              //title: Text(widget.title),
+              leading: Icon(Icons.close,size: 32,color: Colors.black,),
             ),
             body: (_approvedFoodResponse?.categories != null)
                 ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top:16.0,left: 16,right: 16),
+                        child: Text(widget.title,
+                            style: TextStyle(
+                              fontSize: 28,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),textAlign: TextAlign.left,),
+                      ),
                       Container(
                         margin: EdgeInsets.all(16.0),
                         decoration: commonBorderLines(),
                         child: Padding(
                           padding: const EdgeInsets.only(
                               left: 8.0, top: 2, bottom: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              Flexible(
-                                child: TextField(
-                                  maxLines: 1,
-                                  decoration: new InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    hintText: 'search here',
-                                  ),
-                                  textInputAction: TextInputAction.search,
-                                  onSubmitted: (value) {
-                                    CommonApiClass.showLToastMessage(
-                                        message: 'search submitted');
-                                  },
-                                  controller: searchController,
-                                ),
-                                flex: 7,
-                                fit: FlexFit.tight,
-                              ),
-                              Flexible(
-                                child: GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      height: 35,
-                                      width: 50,
-                                      padding: EdgeInsets.all(8),
-                                      child: Icon(
-                                        searchController.text != null
-                                            ? Icons.close
-                                            : Icons.search,
-                                      )),
-                                ),
-                                flex: 1,
-                                fit: FlexFit.tight,
-                              ),
-                            ],
+                          child: TextField(
+                            maxLines: 1,
+                            decoration: new InputDecoration(
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              hintText: 'search here',
+                            ),
+                            textInputAction: TextInputAction.search,
+                            onSubmitted: (value) {
+                              CommonApiClass.showLToastMessage(
+                                  message: 'search submitted');
+                            },
+                            onChanged: _searchTextChanged(),
+                            controller: _searchController,
                           ),
                         ),
                       ),
@@ -221,7 +189,7 @@ class _ApprovedFoodListState extends State<ApprovedFoodList> {
         255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
   }
 
-  Widget _headerSubCategory(String name, String colorCode) => name!=null&&name.isNotEmpty?Container(
+  Widget _headerSubCategory(String name, String colorCode) => Container(
       padding: EdgeInsets.all(16.0),
       alignment: Alignment.centerLeft,
       child: Text(name,
@@ -230,7 +198,7 @@ class _ApprovedFoodListState extends State<ApprovedFoodList> {
               color: colorCode==null?generateRandomColor() :HexColor
                   .fromHex(colorCode),
             fontWeight: FontWeight.bold,
-          ))):Container();
+          )));
 
   Widget _wrapCategories(Categories categories, int index) {
     List<Widget> children = [];
@@ -273,8 +241,8 @@ class _ApprovedFoodListState extends State<ApprovedFoodList> {
 
   Widget _wrapSubCategories(Subcategories subcategories) {
     List<Widget> _children = [];
-    _children.add(_headerSubCategory(subcategories.subCategoryname,subcategories.colorCode));
-    _children.add(Divider());
+    subcategories?.subCategoryname!=null && subcategories.subCategoryname.isNotEmpty?_children.add(_headerSubCategory(subcategories.subCategoryname,subcategories.colorCode)):Container();
+    subcategories?.subCategoryname!=null && subcategories.subCategoryname.isNotEmpty?_children.add(Divider()):Container();
     _children.addAll(_wrapSubCategory(context, subcategories.items.toList()));
 
     return Ink(
@@ -297,6 +265,14 @@ class _ApprovedFoodListState extends State<ApprovedFoodList> {
         ),
       )
       .toList();
+
+  _searchTextChanged() {
+    /*if(_approvedFoodResponse.categories.contains(_searchController.text.toLowerCase())){
+      _newApprovedFoodResponse = _approvedFoodResponse
+          .where((string) => string.toLowerCase().contains(_searchController.text.toLowerCase()))
+          .toList();
+    }*/
+  }
 }
 
 extension HexColor on Color {
