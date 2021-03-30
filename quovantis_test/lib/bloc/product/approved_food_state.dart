@@ -26,8 +26,8 @@ class ApprovedFoodSearchLoading extends ApprovedFoodState {
 
 class SearchedApprovedFoodLoaded extends ApprovedFoodState {
   final ApprovedFood items;
-
-  const SearchedApprovedFoodLoaded({this.items});
+  final ApprovedFood searchedItems;
+  const SearchedApprovedFoodLoaded({this.items,this.searchedItems});
 
   @override
   List<Object> get props => [items];
